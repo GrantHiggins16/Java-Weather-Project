@@ -15,7 +15,7 @@ import java.util.TreeMap;
  */
 
 
-public class DataMonth extends MultiStatisticsAbstract
+public class DataMonth extends MultiStatisticsWithDaysAbstract
 {
     private int year = -1;
     private int month;
@@ -46,8 +46,11 @@ public class DataMonth extends MultiStatisticsAbstract
         {
             return "0000-00, null";
         }
-        return String.format("%02d-%02d, %s",
-                year, month, stationID);
+        else
+        {
+            return String.format("%d-%2d, %s",
+                    year, month, stationID);
+        }
     }
 
     /**
@@ -77,10 +80,7 @@ public class DataMonth extends MultiStatisticsAbstract
     @Override
     protected DataDay getItem(Integer day) 
     {
-        //returns index of i -1 b/c of the
-        //difference btwn array ordering and
-        //ordering of months
-        return days.get(day - 1);
+        return days.get(day);
     }
 
     /**

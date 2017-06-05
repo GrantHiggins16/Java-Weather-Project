@@ -45,15 +45,10 @@ public class DataDay extends StatisticsAbstract
      */
     public DataDay()
     {
-        //initialize hashmap with invalid samples
-        Sample invalid = new Sample();
-        for (String s : dataFields)
-        {
-            if (dataDefinitionList.isValidStat(s))
-            {
-                samples.put(s, invalid);
-            }
-        }
+        //everything but samples is already
+        //in the right state for the 
+        //default constructor so no need to do it here
+        samples = new HashMap<String, Sample>();
     }
 
     /**
@@ -128,10 +123,12 @@ public class DataDay extends StatisticsAbstract
      * returns the minimum dataDay which, since this is 
      * a dataDay object, ends up returning itself
      * @param statisticId Id of statistic to return
+     * @param keys not used
      * @return itself
      */
     @Override
-    public DataDay getStatisticMinDay(String statisticId)
+    public DataDay getStatisticMinDay(String statisticId, 
+            KeyConstraints keys)
     {
         return this;
     }
@@ -140,10 +137,12 @@ public class DataDay extends StatisticsAbstract
      * returns the minimum dataDay which, since this is 
      * a dataDay object, ends up returning itself
      * @param statisticId Id of statistic to return
+     * @param keys not used
      * @return itself
      */
     @Override
-    public DataDay getStatisticMaxDay(String statisticId)
+    public DataDay getStatisticMaxDay(String statisticId, 
+            KeyConstraints keys)
     {
         return this;
     }
@@ -152,34 +151,24 @@ public class DataDay extends StatisticsAbstract
      * gets the average of all samples in the data day
      * @param statisticId not used, only there b/c of
      * inheritance rules
+     * @param keys not used
      * @return sample representing the average valid value
      * in the doc
      */
     @Override
-    public Sample getStatisticAverage(String statisticId)
+    public Sample getStatisticAverage(String statisticId, 
+            KeyConstraints keys)
     {
-        double totalStatisticValue = 0;
-        int validSamples = 0;
-        for (Sample s : samples.values())
+        if (samples.containsKey(statisticId))
         {
-            //if the sample is valid then add its
-            //value to the total
-            if (s.isValid())
-            {
-                totalStatisticValue += s.getValue();
-                validSamples++;
-            }
+
+            return samples.get(statisticId);
         }
+
         //checks if there was a valid sample
-        if (validSamples == 0)
-        {
-            return new Sample();
-        }
         else
         {
-            double averageValue = 
-                    totalStatisticValue / validSamples;
-            return new Sample(averageValue);
+            return new Sample();
         }
     }
 
@@ -201,29 +190,21 @@ public class DataDay extends StatisticsAbstract
      */
     public static void setDataFields(String[] dataFieldList)
     {
-        //stores every field name 
-        for (int i = 0; i < dataFieldList.length; i++)
+     // New array list to store the field names in
+        dataFields = new ArrayList<String>();
+                
+        // Loop through the array and add the items to the array list
+        for (int i = 0; i < dataFieldList.length; ++i)
         {
-            //checks if one of indexes then adds
-            //to dataFields
-            if (dataFieldList[i].equalsIgnoreCase("Year"))
-            {
-                yearIndex = i;
-            }
-            else if (dataFieldList[i].equalsIgnoreCase("month"))
-            {
-                monthIndex = i;
-            }
-            else if (dataFieldList[i].equalsIgnoreCase("day"))
-            {
-                dayIndex = i;
-            }
-            else if (dataFieldList[i].equalsIgnoreCase("stid"))
-            {
-                stationIDIndex = i;
-            }
             dataFields.add(dataFieldList[i]);
         }
+        
+        // We expect year, month, day and station ID to be in the list:
+        //  find and store their indices
+        yearIndex = dataFields.indexOf("YEAR");
+        monthIndex = dataFields.indexOf("MONTH");
+        dayIndex = dataFields.indexOf("DAY");
+        stationIDIndex = dataFields.indexOf("STID");
     }   
 
     /**
@@ -233,7 +214,7 @@ public class DataDay extends StatisticsAbstract
      */
     public String toString()
     {
-        return String.format("%d-%02d-%02d, %s", 
-                year, month, day, stationID);
+        return String.format("%d-%02d-%02d", 
+                year, month, day);
     }
 }

@@ -1,3 +1,4 @@
+
 /**
  * @version oct 9
  * @author Grant
@@ -21,123 +22,229 @@ public abstract class MultiStatisticsAbstract
      * value of a statistic
      * @param statisticId the statisticID for the
      * stat we are trying to find min of
+     * @param constraints the years that should
+     * be printed
      * @return the day of min statistic value
      */
     @Override
-    public DataDay getStatisticMinDay(String statisticId)
+    public DataDay getStatisticMinDay(String statisticId, 
+            KeyConstraints constraints)
     {
-        //variables to compare stat values
-        //of days
-        DataDay minCurrentStatistic = new DataDay();
-        Sample minCurrentStatSample = new Sample();
-        DataDay currentStatistic;
-        Sample currentStatSample;
-        //loops through every item in the set
-        for (Integer index : this)
+        // Remember both the best day and the best sample so far
+        //  (both are initialized to invalid)
+        DataDay bestDay = new DataDay();
+        Sample bestValue = new Sample();
+
+        // Iterate over sub-objects
+        //checks if constraints includes year or is
+        //null. order prevents null pointer due to 
+        //short-circuiting
+
+        //create correct iterator based on 
+        //the state of the constraints
+        if (constraints == null)
         {
-            
-            //reduces getItem to a data day
-            currentStatistic = 
-                    getItem(index + 1).getStatisticMinDay(statisticId); 
-            //reduces that  day to a sample
-            currentStatSample =
-                    currentStatistic.getStatisticAverage(statisticId);
-            //compares the current minimum Statistic with
-            //current and replaces if current is less than
-            if (currentStatSample.isLessThan(minCurrentStatSample))
+            for (Integer key : this)
             {
-                minCurrentStatistic = currentStatistic;
-                minCurrentStatSample = currentStatSample;
+                // Get the sub-object corresponding to key
+                StatisticsAbstract o = getItem(key);
+                //checks if constraints includes year or is
+                //null. order prevents null pointer due to 
+                //short-circuiting
+
+                // Ask the next object what its best value is
+                DataDay newDay = o.getStatisticMinDay(statisticId, 
+                        constraints);
+
+                Sample newValue = newDay.getStatisticAverage(statisticId,
+                        constraints);
+
+                // Is this new one better?
+                if (newValue.isLessThan(bestValue))
+                {
+                    // Yes - replace
+                    bestDay = newDay;
+                    bestValue = newValue;
+                }
             }
         }
-        //due to the function of isLessThan in
-        //Sample - this returns a blank data day
-        //only if all stats are invalid
-        return minCurrentStatistic;
+        else
+        {
+            for (Integer key : this)
+            {
+                if (constraints.contains(key))
+                {
+                    // Get the sub-object corresponding to key
+                    StatisticsAbstract o = getItem(key);
+                    //checks if constraints includes year or is
+                    //null. order prevents null pointer due to 
+                    //short-circuiting
+
+                    // Ask the next object what its best value is
+                    DataDay newDay = o.getStatisticMinDay(statisticId, 
+                            constraints.getNext());
+
+                    Sample newValue = newDay.getStatisticAverage(statisticId,
+                            constraints.getNext());
+
+                    // Is this new one better?
+                    if (newValue.isLessThan(bestValue))
+                    {
+                        // Yes - replace
+                        bestDay = newDay;
+                        bestValue = newValue;
+                    }
+                }
+            }
+        }
+        return bestDay;
     }
+
+
+
 
     /**
      * method that determines the day of max statistic
      * value
      * @param statisticId the statisticID for the
      * stat we are trying to find max of
+     * @param constraints the years that should
+     * be printed
      * @return the day of max statistic value
      */
     @Override
-    public DataDay getStatisticMaxDay(String statisticId)
+    public DataDay getStatisticMaxDay(String statisticId, 
+            KeyConstraints constraints)
     {
-        //variables to compare stat values
-        //of days
-        DataDay maxCurrentStatistic = new DataDay();
-        Sample maxCurrentStatSample = new Sample();
-        DataDay currentStatistic;
-        Sample currentStatSample;
-        //loops through every item in the set
-        for (Integer index : this)
+        // Remember both the best day and the best sample so far
+        // (both are initialized to invalid)
+        DataDay bestDay = new DataDay();
+        Sample bestValue = new Sample();
+        //create correct iterator based on 
+        //the state of the constraints
+        if (constraints == null)
         {
-            
-            //reduces getItem to a data day
-            //index + 1 b/c of the difference btwn
-            //indexes and months and years and such
-            currentStatistic = 
-                    getItem(index + 1).getStatisticMaxDay(statisticId); 
-            //reduces that  day to a sample
-            currentStatSample =
-                    currentStatistic.getStatisticAverage(statisticId);
-            //compares the current maximum Statistic with
-            //current and replaces if current is greater than
-            if (currentStatSample.isLessThan(maxCurrentStatSample))
+            for (Integer key : this)
             {
-                maxCurrentStatistic = currentStatistic;
-                maxCurrentStatSample = currentStatSample;
+                // Get the sub-object corresponding to key
+                StatisticsAbstract o = getItem(key);
+                //checks if constraints includes year or is
+                //null. order prevents null pointer due to 
+                //short-circuiting
+
+                // Ask the next object what its best value is
+                DataDay newDay = o.getStatisticMaxDay(statisticId, 
+                        constraints);
+
+                Sample newValue = newDay.getStatisticAverage(statisticId,
+                        constraints);
+
+                // Is this new one better?
+                if (newValue.isGreaterThan(bestValue))
+                {
+                    // Yes - replace
+                    bestDay = newDay;
+                    bestValue = newValue;
+                }
             }
         }
-        //due to the function of isGreaterThan in
-        //Sample - this returns a blank data day
-        //only if all stats are invalid
-        return maxCurrentStatistic;
+        else
+        {
+            for (Integer key : this)
+            {
+                if (constraints.contains(key))
+                {
+                    // Get the sub-object corresponding to key
+                    StatisticsAbstract o = getItem(key);
+                    //checks if constraints includes year or is
+                    //null. order prevents null pointer due to 
+                    //short-circuiting
+
+                    // Ask the next object what its best value is
+                    DataDay newDay = o.getStatisticMaxDay(statisticId, 
+                            constraints.getNext());
+
+                    Sample newValue = newDay.getStatisticAverage(statisticId,
+                            constraints.getNext());
+
+                    // Is this new one better?
+                    if (newValue.isGreaterThan(bestValue))
+                    {
+                        // Yes - replace
+                        bestDay = newDay;
+                        bestValue = newValue;
+                    }
+                }
+            }
+        }
+
+        return bestDay;
     }
+
+
 
     /**
      * method that determines the average statistic
      * value
      * @param statisticId the statisticID for the
      * stat we are trying to find min of
+     * @param constraints the years that should
+     * be printed
      * @return the average statistic value
      */
     @Override
-    public Sample getStatisticAverage(String statisticId)
+    public Sample getStatisticAverage(String statisticId, 
+            KeyConstraints constraints)
     {
-        //variables to keep track of statistics
-        Sample statCurrentDay;
-        Double totalStatisticValue = 0.0;
-        int validStats = 0;
-        //loops through every item in the set
-        for (Integer index : this)
+
+        double accum = 0;
+        int count = 0;
+        if (constraints == null)
         {
-            //reduces getItem to a wind speed sample
-            statCurrentDay = 
-                    getItem(index).getStatisticAverage(statisticId);
-            //checks that current sample is valid
-            if (statCurrentDay.isValid())
+            for (Integer i : this)
             {
-                totalStatisticValue += statCurrentDay.getValue();
-                validStats++;
+                Sample newValue =
+                        getItem(i).getStatisticAverage(
+                                statisticId, constraints);
+                //Ask the next object what its average value is
+
+                // Is this new one valid?
+                if (newValue.isValid())
+                {
+                    // Yes - include
+                    accum += newValue.getValue();
+                    ++count;
+                }
             }
         }
-        //checks if the average is invalid
-        if (totalStatisticValue >= 0.01 && 
-                totalStatisticValue <= 0.01)
-        {
-            //if invalid return invalid sample()
-            return new Sample();
-        }
-        
         else
         {
-
-            double avgValue = totalStatisticValue / validStats;
-            return new Sample(avgValue);
+            for (Integer i : this)
+            {
+                if (constraints.contains(i))
+                {
+                    Sample newValue = 
+                            getItem(i).getStatisticAverage(
+                                    statisticId, constraints.getNext());
+                    if (newValue.isValid())
+                    {
+                        // Yes - include
+                        accum += newValue.getValue();
+                        ++count;
+                    }
+                }
+            }
+        }
+        // Were there any sub-objects?
+        if (count == 0)
+        {
+            // No - return an invalid sample
+            return new Sample();
+        }
+        else
+        {
+            // Yes - return the average
+            return new Sample(accum / count);
         }
     }
 
@@ -145,5 +252,4 @@ public abstract class MultiStatisticsAbstract
      * adds a day to the dataset
      * @param day day to be added
      */
-    protected abstract void addDay(DataDay day);
 }

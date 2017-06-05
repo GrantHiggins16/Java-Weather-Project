@@ -40,6 +40,7 @@ public class DataDayTest
         dataD = new DataDay(strg);
         Assert.assertEquals("2011-01-01, ACME", dataD.toString());
         br.close();
-        System.out.println(dataD.getStatisticAverage("9AVG"));
+        System.out.println(dataD.getStatisticAverage("9AVG", 
+                new KeyConstraints()));
     }
 }

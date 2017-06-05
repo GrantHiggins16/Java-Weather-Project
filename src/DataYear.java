@@ -1,6 +1,8 @@
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * @version oct 9
@@ -10,13 +12,14 @@ import java.util.TreeMap;
  * 
  * class representing a year of data
  */
-public class DataYear extends MultiStatisticsAbstract
+public class DataYear extends MultiStatisticsWithDaysAbstract
 {
-    private int year = -1;
+    private int year;
     private String stationID;
     private TreeMap<Integer, DataMonth> months = 
             new TreeMap<Integer, DataMonth>();
-
+    private static TreeSet<Integer> yearList =
+            new TreeSet<Integer>();
     /**
      * consructor for data year
      */
@@ -32,30 +35,20 @@ public class DataYear extends MultiStatisticsAbstract
      */
     protected void addDay(DataDay day)
     {
-        //sets instance vars if not already
-        //initialized
-        if (year == -1)
-        {
-            year = day.getYear();
-            stationID = day.getStationID();
-        }
-        
         //finds month and adds day to it
         //if month doesnt exist, it is created
         //and day is added
-        DataMonth dm = new DataMonth();
         if (!(months.containsKey(day.getMonth())))
         {
-            dm.addDay(day);
-            months.put(day.getMonth(), dm);
+            months.put(day.getMonth(), new DataMonth());
+            months.get(day.getMonth()).addDay(day);
         }
         //else day is simply added
         else
         {
-            dm = months.get(day.getMonth());
-            dm.addDay(day);
-            months.put(day.getMonth(), dm);
+            months.get(day.getMonth()).addDay(day);
         }
+        yearList.add(day.getYear());
     }
 
 
@@ -70,7 +63,7 @@ public class DataYear extends MultiStatisticsAbstract
     {
         //must subtract 1 from month due to difference
         //in array indexing and month numbering
-        return months.get(month - 1);
+        return months.get(month);
     }
 
 
@@ -108,5 +101,16 @@ public class DataYear extends MultiStatisticsAbstract
             toReturn += m.toString() + "\n";
         }
         return toReturn;    
+    }
+    
+    /**
+     * provides access to the years loaded into
+     * the program
+     * @return arraylist of years added in order
+     * of least to greatest
+     */
+    public static ArrayList<Integer> getYearList()
+    {
+        return new ArrayList<Integer>(yearList);
     }
 }

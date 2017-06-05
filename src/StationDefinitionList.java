@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 /**
  * @version oct 24
@@ -63,6 +64,7 @@ public class StationDefinitionList
             //reads next line
             strg = br.readLine();
         }
+        //solves null pointer errors
         //closes bufferedReader
         br.close();
     }
@@ -120,11 +122,13 @@ public class StationDefinitionList
                 new BufferedReader(new FileReader(fileName));
         //first line is used to make
         // list of fields in dataday- read through
+
         DataDay.setDataFields(br.readLine().split(","));
         //string of csvs
         String strg = br.readLine();
         //var to create dataDays
         String[] args;
+
         //while there is still info to be read
         while (strg != null)
         {
@@ -135,6 +139,7 @@ public class StationDefinitionList
             //reads next line
             strg = br.readLine();
         }
+
         //closes bufferedReader
         br.close();
     }
@@ -155,6 +160,7 @@ public class StationDefinitionList
         {
             stationIDs.add(iD);
         }
+        Collections.sort(stationIDs);
         return stationIDs;
     }
 
@@ -162,26 +168,29 @@ public class StationDefinitionList
      * find the average of a statistic
      * @param stationId station to search
      * @param variableId var to find avg of
+     * @param keys years to be read
      * @return sample representing average
      * stat
      */
     public Sample getStatisticAverage(String stationId, 
-            String variableId)
+            String variableId, KeyConstraints keys)
     {
-        return stationMap.get(stationId).getStatisticAverage(variableId);
+        return stationMap.get(stationId).getStatisticAverage(variableId, keys);
     }
     
     /**
      * find the max of a statistic
      * @param stationId station to search
      * @param variableId var to find max of
+     * @param keys contains the years to be 
+     * computed
      * @return var representing max
      * day
      */
     public DataDay getStatisticMaxDay(String stationId, 
-            String variableId)
+            String variableId, KeyConstraints keys)
     {
-        return stationMap.get(stationId).getStatisticMaxDay(variableId);
+        return stationMap.get(stationId).getStatisticMaxDay(variableId, keys);
 
     }
     
@@ -189,13 +198,15 @@ public class StationDefinitionList
      * find the min of a statistic
      * @param stationId station to search
      * @param variableId var to find min of
+     * @param keys contains the years to be 
+     * computed
      * @return var representing min
      * stat
      */
     public DataDay getStatisticMinDay(String stationId,
-            String variableId)
+            String variableId, KeyConstraints keys)
     {
-        return stationMap.get(stationId).getStatisticMinDay(variableId);
+        return stationMap.get(stationId).getStatisticMinDay(variableId, keys);
     }
 
 }

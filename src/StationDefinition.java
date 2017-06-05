@@ -1,3 +1,5 @@
+import java.awt.Graphics2D;
+
 /**
  * @version oct 24
  * @author Grant
@@ -5,7 +7,7 @@
  * 
  * represents info about a station
  */
-public class StationDefinition 
+public class StationDefinition extends StatisticsAbstract
 {
     private String stationID;
     private String name;
@@ -13,7 +15,7 @@ public class StationDefinition
     private double nlat;
     private double elon;
     private DataSet dataSet;
-    
+
     /**
      * constructor for a station definition
      * @param stationId identifying factor of station
@@ -41,7 +43,7 @@ public class StationDefinition
     {
         dataSet.addDay(day);
     }
-    
+
     /**
      * getter for station id
      * @return the stationID
@@ -86,37 +88,46 @@ public class StationDefinition
     {
         return elon;
     }
-    
+
     /**
      * gets the average statistic of a dataSet
      * @param statisticId statistic to average
+     * @param keys contains the years to be 
+     * computed
      * @return average of statisticId's group
      */
-    public Sample getStatisticAverage(String statisticId)
+    public Sample getStatisticAverage(String statisticId,
+            KeyConstraints keys)
     {
-        return dataSet.getStatisticAverage(statisticId);
+        return dataSet.getStatisticAverage(statisticId, keys);
     }
-    
+
     /**
      * gets the max statistic of a dataSet
      * @param statisticId statistic to max
+     * @param keys contains the years to be 
+     * computed
      * @return max of statisticId's group
      */
-    public DataDay getStatisticMaxDay(String statisticId)
+    public DataDay getStatisticMaxDay(String statisticId, 
+            KeyConstraints keys)
     {
-        return dataSet.getStatisticMaxDay(statisticId);
+        return dataSet.getStatisticMaxDay(statisticId, keys);
     }
-    
+
     /**
      * gets the min statistic of a dataSet
      * @param statisticId statistic to minimize
+     * @param keys contains the years to be 
+     * computed
      * @return min of statisticId's group
      */
-    public DataDay getStatisticMinDay(String statisticId)
+    public DataDay getStatisticMinDay(String statisticId,
+            KeyConstraints keys)
     {
-        return dataSet.getStatisticMinDay(statisticId);
+        return dataSet.getStatisticMinDay(statisticId, keys);
     }
-    
+
     /**
      * returns a string rep of all data 
      * defining a station
@@ -127,7 +138,7 @@ public class StationDefinition
         return String.format("<%s> <%s> <%s> <%f> <%f>",
                 stationID, name, city, nlat, elon);
     }
-    
+
     /**
      * returns string that describes
      * entire content of object
@@ -139,5 +150,20 @@ public class StationDefinition
         toReturn += "\n";
         toReturn += dataSet.getStructure();
         return toReturn;
+    }
+    
+    /**
+     * draws a station
+     * @param g2 context of where to draw
+     */
+    public void draw(Graphics2D g2)
+    {
+        // TODO: check if scale or offset should be done
+        g2.drawOval((int) 
+                (nlat * StateFrame.LATITUDE_SCALE),
+                (int) 
+                (elon * StateFrame.LONGITUDE_SCALE),
+                StateFrame.STATION_RADIUS, 
+                StateFrame.STATION_RADIUS);
     }
 }

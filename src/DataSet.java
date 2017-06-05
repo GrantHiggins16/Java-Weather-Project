@@ -10,12 +10,12 @@ import java.util.TreeMap;
  * 
  * Class representing a set of DataYears
  */
-public class DataSet extends MultiStatisticsAbstract
+public class DataSet extends MultiStatisticsWithDaysAbstract
 {
 
     private TreeMap<Integer, DataYear> years = 
             new TreeMap<Integer, DataYear>();
-    private String stationId = "";
+    private String stationId;
     
     /**
      * Constructor for DataSet 
@@ -38,7 +38,7 @@ public class DataSet extends MultiStatisticsAbstract
     {
         //year-1 due to difference between numbering
         //of indexes and years
-        return years.get(year - 1);
+        return years.get(year);
     }
 
     /**
@@ -82,26 +82,18 @@ public class DataSet extends MultiStatisticsAbstract
      */
     protected void addDay(DataDay d)
     {
-        //sets station ID if it hasnt been se
-        if (stationId.equals(""))
-        {
-            stationId = d.getStationID();
-        }
         //finds year and adds day to it
         //if year doesnt exist, it is created
         //and day is added
-        DataYear dy = new DataYear();
         if (!(years.containsKey(d.getYear())))
         {
-            dy.addDay(d);
-            years.put(d.getYear(), dy);
+            years.put(d.getYear(), new DataYear());
+            years.get(d.getYear()).addDay(d);
         }
         //else day is simply added
         else
         {
-            dy = years.get(d.getYear());
-            dy.addDay(d);
-            years.put(d.getYear(), dy);
+            years.get(d.getYear()).addDay(d);
         }
     }
 }
